@@ -1,0 +1,23 @@
+version: '3'
+services:
+    database:
+        image: postgres
+        env_file:
+            - database.env
+        volumes:
+            - db-data:/var/lib/postgresql/data/
+        ports:
+            - 5433:5432
+    redis:
+        image: "redis:alpine"
+        ports:
+            - "6379:6379"
+        environment:
+            - REDIS_REPLICATION_MODE=master
+        volumes:
+            - redis-data:/data
+volumes:
+    db-data:
+        driver: local
+    redis-data:
+        driver: local
