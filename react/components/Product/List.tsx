@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import axios from 'axios';
+import ReactPaginate from 'react-paginate';
 
 interface Product {
   id: string;
@@ -26,20 +27,26 @@ interface Product {
 
 const ProductList: React.FC = () => {
   const [pageIndex, setPageIndex] = useState<number>(1);
+  const [pageCount, setPageCount] = useState<number>(1);
 
   const productApi = `${process.env.GO_MONGO_ENDPOINT_API}/product?page=${pageIndex}`;
   const { data: products, revalidate } = useSWR(productApi);
 
   const handleRemoveProduct = (id: string) => {
-    axios
-      .delete(`${process.env.GO_MONGO_ENDPOINT_API}/product/${id}`)
-      .then((res) => {
-        const result = confirm('Are you sure to delete this product?');
-        if (result) {
+    const result = confirm('Are you sure to delete this product?');
+    if (result) {
+      axios
+        .delete(`${process.env.GO_MONGO_ENDPOINT_API}/product/${id}`)
+        .then((res) => {
           revalidate();
-        }
-      })
-      .catch((err) => console.error(err));
+        })
+        .catch((err) => console.error(err));
+    }
+  };
+
+  const handlePageClick = ({ selected }) => {
+    setPageIndex(selected + 1);
+    revalidate();
   };
 
   return (
@@ -101,8 +108,18 @@ const ProductList: React.FC = () => {
       </table>
 
       <div>
-        <button onClick={() => setPageIndex(pageIndex - 1)}>Previous</button>
-        <button onClick={() => setPageIndex(pageIndex + 1)}>Next</button>
+        <ReactPaginate
+          previousLabel={'previous'}
+          nextLabel={'next'}
+          breakLabel={'...'}
+          breakClassName={'break-me'}
+          pageCount={products?.total_pages || pageCount}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={'pagination'}
+          subContainerClassName={'pages pagination'}
+          activeClassName={'active'}
+        />
       </div>
     </React.Fragment>
   );

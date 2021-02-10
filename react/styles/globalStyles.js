@@ -31,4 +31,25 @@ export default css.global`
     max-width: 1200px;
     padding: 0 22px;
   }
+
+  .pagination {
+    list-style-type: none;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+  }
+
+  .pagination > li {
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .pagination > li.active {
+    color: blue;
+  }
+
+  .pagination > li > a {
+    padding: 0 .7rem;
+  }
 `;

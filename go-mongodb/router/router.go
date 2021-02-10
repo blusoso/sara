@@ -48,4 +48,8 @@ func SetupRoutes(app *fiber.App) {
 	category := v1.Group("/category")
 	category.Get("/", handler.GetCategories)
 	category.Post("/", handler.CreateCategory)
+
+	collectionsProducts := v1.Group("/collections-products")
+	collectionsProducts.Get("/", handler.GetCollectionsProducts)
+	collectionsProducts.Post("/", handler.CreateCollectionsProducts)
 }

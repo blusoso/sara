@@ -11,25 +11,22 @@ import (
 )
 
 func GetCollectionsLevel3(c *fiber.Ctx) error {
-	// lookupStage := bson.D{{"$lookup", bson.D{{"from", "sub_sub_collections"}, {"localField", "_id"}, {"foreignField", "parent_id"}, {"as", "sub"}}}}
+	cursor, err := database.Mg.Db.Collection("collections_level_3").Find(c.Context(), bson.D{{}})
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": err.Error(), "data": ""})
+	}
 
-	// cursor, err := database.Mg.Db.Collection("sub_sub_collections").Aggregate(c.Context(), mongo.Pipeline{lookupStage})
-	// if err != nil {
-	// 	panic(err)
-	// }
+	var collectionLevel3 []model.CollectionLevel3
+	if err = cursor.All(c.Context(), &collectionLevel3); err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": err.Error(), "data": ""})
+	}
 
-	// var showsLoaded []bson.M
-	// if err = cursor.All(c.Context(), &showsLoaded); err != nil {
-	// 	panic(err)
-	// }
-
-	// return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Query all collections success", "data": showsLoaded})
-	return c.Status(200).JSON("xxx")
+	return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Query all collections success", "data": collectionLevel3})
 }
 
 func CreateCollectionLevel3(c *fiber.Ctx) error {
 	subCollection := database.Mg.Db.Collection("collections_level_2")
-	subSubCollection := database.Mg.Db.Collection("collections_level_3")
+	database := database.Mg.Db.Collection("collections_level_3")
 
 	collectionLevel3 := new(model.CollectionLevel3)
 
@@ -37,9 +34,8 @@ func CreateCollectionLevel3(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"status": "error", "message": err.Error(), "data": ""})
 	}
 
-	insertionResult, err := subSubCollection.InsertOne(c.Context(), subSubCollection)
-	fmt.Println(insertionResult)
-	insertionResult2, err := subCollection.UpdateOne(c.Context(), bson.M{"_id": collectionLevel3.CollectionLevel2Id}, bson.D{{"$push", bson.D{{"collection_level_3", insertionResult.InsertedID}}}})
+	insertionResult, err := database.InsertOne(c.Context(), collectionLevel3)
+	insertionResult2, err := subCollection.UpdateOne(c.Context(), bson.M{"_id": collectionLevel3.CollectionLevel2Id}, bson.D{{"$push", bson.D{{"collection_level_3", collectionLevel3}}}})
 	fmt.Println(insertionResult2)
 
 	if err != nil {
@@ -48,7 +44,7 @@ func CreateCollectionLevel3(c *fiber.Ctx) error {
 
 	id := bson.D{{Key: "_id", Value: insertionResult.InsertedID}}
 
-	createdRecord := subSubCollection.FindOne(c.Context(), id)
+	createdRecord := database.FindOne(c.Context(), id)
 
 	createdSubSubCollection := &model.CollectionLevel3{}
 	createdRecord.Decode(createdSubSubCollection)

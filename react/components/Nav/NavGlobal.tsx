@@ -5,7 +5,8 @@ const NavGlobal: React.FC = () => {
     return (
         <React.Fragment>
             <span><Link href="/product"><a>Product</a></Link></span>
-            <span><Link href="/category"><a>Category</a></Link></span>
+            <span><Link href="/collection
+            "><a>Collection</a></Link></span>
         </React.Fragment>
     )
 }

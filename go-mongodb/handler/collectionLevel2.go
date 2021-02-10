@@ -47,5 +47,5 @@ func CreateCollectionLevel2(c *fiber.Ctx) error {
 	createCollection := &model.CollectionLevel2{}
 	createdRecord.Decode(createCollection)
 
-	return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Create a category success", "data": createCollection})
+	return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Create a collection success", "data": createCollection})
 }

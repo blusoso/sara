@@ -16,14 +16,20 @@ import (
 )
 
 func GetProducts(c *fiber.Ctx) error {
-	page, err := strconv.ParseInt(c.Query("page"), 10, 64)
+	var page int64
+	var err error
+	limit := int64(10)
+	var offset int64
+
+	if c.Query("page") == "" {
+		page = 1
+	} else {
+		page, err = strconv.ParseInt(c.Query("page"), 10, 64)
+	}
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": err.Error(), "data": ""})
 	}
-
-	limit := int64(10)
-	var offset int64
 
 	if page > 0 {
 		offset = (page - 1) * limit
@@ -36,7 +42,13 @@ func GetProducts(c *fiber.Ctx) error {
 
 	collection := database.Mg.Db.Collection("products")
 	query := bson.D{{"deleted_at", bson.D{{"$eq", nil}}}}
+
 	cursor, err := collection.Find(c.Context(), query, opts)
+	productsCount, _ := collection.CountDocuments(c.Context(), query)
+	totalPages := productsCount / limit
+	if totalPages == 0 {
+		totalPages = 1
+	}
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": err.Error(), "data": ""})
@@ -48,7 +60,7 @@ func GetProducts(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": err.Error(), "data": ""})
 	}
 
-	return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Query all products success", "data": products})
+	return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Query all products success", "data": products, "total_pages": totalPages})
 }
 
 func GetProduct(c *fiber.Ctx) error {
