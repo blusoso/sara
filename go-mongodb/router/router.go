@@ -29,9 +29,12 @@ func SetupRoutes(app *fiber.App) {
 	product.Put("/:id", handler.UpdateProduct)
 	product.Delete("/:id", handler.DeleteProduct)
 
-	shop := v1.Group("/shop")
-	shop.Get("/", handler.GetShops)
-	shop.Post("/", handler.CreateShop)
+	venderCompany := v1.Group("/vender-company")
+	venderCompany.Get("/", handler.GetVenderCompanies)
+	venderCompany.Get("/:id", handler.GetVenderCompany)
+	venderCompany.Post("/", handler.CreateVenderCompany)
+	venderCompany.Put("/:id", handler.UpdateVenderCompany)
+	venderCompany.Delete("/:id", handler.DeleteVenderCompany)
 
 	collectionLevel1 := v1.Group("/collection-level-1")
 	collectionLevel1.Get("/", handler.GetCollectionsLevel1)
