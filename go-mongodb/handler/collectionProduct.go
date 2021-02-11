@@ -12,8 +12,11 @@ import (
 func GetCollectionsProducts(c *fiber.Ctx) error {
 	group := bson.D{{"$group", bson.D{{"_id", bson.D{{"collection_level1_id", "$collection_level1_id"}, {"collection_level2_id", "$collection_level2_id"}, {"collection_level3_id", "$collection_level3_id"}}}, {"products", bson.D{{"$push", "$product_id"}}}}}}
 	project := bson.D{{"$project", bson.D{{"_id", 0}, {"collection_level1_id", "$_id.collection_level1_id"}, {"collection_level2_id", "$_id.collection_level2_id"}, {"collection_level3_id", "$_id.collection_level3_id"}, {"products", 1}}}}
+	lookupCollection1 := bson.D{{"$lookup", bson.D{{"from", "collections_level_1"}, {"localField", "collection_level1_id"}, {"foreignField", "_id"}, {"as", "collection_level_1"}}}}
+	lookupCollection2 := bson.D{{"$lookup", bson.D{{"from", "collections_level_2"}, {"localField", "collection_level2_id"}, {"foreignField", "_id"}, {"as", "collection_level_2"}}}}
+	lookupCollection3 := bson.D{{"$lookup", bson.D{{"from", "collections_level_3"}, {"localField", "collection_level3_id"}, {"foreignField", "_id"}, {"as", "collection_level_3"}}}}
 
-	showLoadedCursor, err := database.Mg.Db.Collection("collections_products").Aggregate(c.Context(), mongo.Pipeline{group, project})
+	showLoadedCursor, err := database.Mg.Db.Collection("collections_products").Aggregate(c.Context(), mongo.Pipeline{group, project, lookupCollection1, lookupCollection2, lookupCollection3})
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": err.Error(), "data": ""})

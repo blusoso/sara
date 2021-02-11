@@ -29,7 +29,6 @@ const ProductCreate: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const productApi = `${process.env.GO_MONGO_ENDPOINT_API}/product/${id}`;
   const { data: defaultProduct, revalidate } = useSWR(productApi);
-
   const handleSubmit = (newProduct: Product) => {
     newProduct.colors= [newProduct.colors];
     newProduct.sizes= [newProduct.sizes];
@@ -49,7 +48,7 @@ const ProductCreate: React.FC<{ id: string }> = ({ id }) => {
       {defaultProduct && (
         <ProductForm
           submitProduct={handleSubmit.bind(this)}
-          defaultProduct={defaultProduct}
+          defaultProduct={defaultProduct.data}
         />
       )}
     </React.Fragment>
