@@ -11,7 +11,8 @@ interface Product {
   brand: string;
   condition: string;
   meta_description: string;
-  description: string;
+  short_description: string;
+  long_description: string;
   colors?: string[];
   sizes?: string[];
   price: number;

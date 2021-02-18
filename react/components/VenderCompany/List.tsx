@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import axios from 'axios';
+import ReactPaginate from 'react-paginate';
 
 interface VenderCompany {
   id: string;
@@ -14,6 +15,9 @@ interface VenderCompany {
 }
 
 const VenderCompanyList: React.FC = () => {
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [pageCount, setPageCount] = useState<number>(1);
+
   const venderCompanyApi = `${process.env.GO_MONGO_ENDPOINT_API}/vender-company`;
   const { data: venderCompanies, revalidate } = useSWR(venderCompanyApi);
 
@@ -27,6 +31,11 @@ const VenderCompanyList: React.FC = () => {
         })
         .catch((err) => console.error(err));
     }
+  };
+
+  const handlePageClick = ({ selected }) => {
+    setPageIndex(selected + 1);
+    revalidate();
   };
 
   return (
@@ -68,6 +77,21 @@ const VenderCompanyList: React.FC = () => {
           ))}
         </tbody>
       </table>
+
+      <div>
+        <ReactPaginate
+          previousLabel={'previous'}
+          nextLabel={'next'}
+          breakLabel={'...'}
+          breakClassName={'break-me'}
+          pageCount={venderCompanies?.total_pages || pageCount}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={'pagination'}
+          subContainerClassName={'pages pagination'}
+          activeClassName={'active'}
+        />
+      </div>
     </React.Fragment>
   );
 };

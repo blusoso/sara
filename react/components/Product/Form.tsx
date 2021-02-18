@@ -8,7 +8,8 @@ interface Product {
   brand: string;
   condition: string;
   meta_description: string;
-  description: string;
+  short_description: string;
+  long_description: string;
   colors?: string;
   sizes?: string;
   price: number;
@@ -35,7 +36,8 @@ const ProductForm: React.FC<Props> = ({ submitProduct, defaultProduct }) => {
         brand: defaultProduct?.brand,
         condition: defaultProduct?.condition,
         meta_description: defaultProduct?.meta_description,
-        description: defaultProduct?.description,
+        short_description: defaultProduct?.short_description,
+        long_description: defaultProduct?.long_description,
         colors: defaultProduct?.colors,
         sizes: defaultProduct?.sizes,
         price: defaultProduct?.price,
