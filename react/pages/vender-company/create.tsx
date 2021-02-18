@@ -4,12 +4,22 @@ import useSWR from 'swr';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
-const ProductCreate: React.FC = () => {
+interface VenderCompany {
+    id: string;
+    name: string;
+    address: string;
+    phone_number: string;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: string;
+  }
+
+const VenderCompanyCreate: React.FC = () => {
   const router = useRouter();
   const productApi = `${process.env.GO_MONGO_ENDPOINT_API}/vender-company`;
   const { revalidate } = useSWR(productApi);
 
-  const handleSubmit = (venderCompany) => {
+  const handleSubmit = (venderCompany: VenderCompany) => {
     axios
       .post(
         `${process.env.GO_MONGO_ENDPOINT_API}/vender-company`,
@@ -31,4 +41,4 @@ const ProductCreate: React.FC = () => {
   );
 };
 
-export default ProductCreate;
+export default VenderCompanyCreate;

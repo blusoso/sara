@@ -3,6 +3,16 @@ import useSWR from 'swr';
 import Link from 'next/link';
 import axios from 'axios';
 
+interface VenderCompany {
+  id: string;
+  name: string;
+  address: string;
+  phone_number: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+}
+
 const VenderCompanyList: React.FC = () => {
   const venderCompanyApi = `${process.env.GO_MONGO_ENDPOINT_API}/vender-company`;
   const { data: venderCompanies, revalidate } = useSWR(venderCompanyApi);
@@ -33,7 +43,7 @@ const VenderCompanyList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {venderCompanies?.data?.map((venderCompany) => (
+          {venderCompanies?.data?.map((venderCompany: VenderCompany) => (
             <tr key={venderCompany.id}>
               <td>{venderCompany.name}</td>
               <td>{venderCompany.address}</td>
@@ -47,7 +57,11 @@ const VenderCompanyList: React.FC = () => {
                   </Link>
                 </div>
                 <div>
-                  <a onClick={() => handleRemoveVenderCompany(venderCompany.id)}>Remove</a>
+                  <a
+                    onClick={() => handleRemoveVenderCompany(venderCompany.id)}
+                  >
+                    Remove
+                  </a>
                 </div>
               </td>
             </tr>

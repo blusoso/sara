@@ -1,7 +1,22 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-const VenderCompanyForm: React.FC = ({
+interface VenderCompany {
+  id: string;
+  name: string;
+  address: string;
+  phone_number: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+}
+
+interface Props {
+  submitVenderCompany: (venderCompany: VenderCompany) => void;
+  defaultVenderCompany?: VenderCompany;
+}
+
+const VenderCompanyForm: React.FC<Props> = ({
   submitVenderCompany,
   defaultVenderCompany,
 }) => {
@@ -13,7 +28,9 @@ const VenderCompanyForm: React.FC = ({
     },
   });
 
-  const onSubmit = (venderCompany) => submitVenderCompany(venderCompany);
+  const onSubmit = (venderCompany: VenderCompany) => {
+    submitVenderCompany(venderCompany);
+  };
 
   return (
     <React.Fragment>

@@ -4,12 +4,22 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import VenderCompanyForm from '@/components/VenderCompany/Form';
 
-const ProductCreate: React.FC<{ id: string }> = ({ id }) => {
+interface VenderCompany {
+  id: string;
+  name: string;
+  address: string;
+  phone_number: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+}
+
+const VenderCompanyEdit: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const venderCompanyApi = `${process.env.GO_MONGO_ENDPOINT_API}/vender-company/${id}`;
   const { data: defaultVenderCompany, revalidate } = useSWR(venderCompanyApi);
 
-  const handleSubmit = (newVenderCompany) => {
+  const handleSubmit = (newVenderCompany: VenderCompany) => {
     axios
       .put(venderCompanyApi, newVenderCompany)
       .then((res) => {
@@ -38,4 +48,4 @@ export const getServerSideProps = async ({ query }) => {
   };
 };
 
-export default ProductCreate;
+export default VenderCompanyEdit;
